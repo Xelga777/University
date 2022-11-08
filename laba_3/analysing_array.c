@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "interface.h"
 #include "analysing_array.h"
+#include "computating.h"
 
 int main() {
     // Initializing variables
@@ -32,7 +33,7 @@ int main() {
             code_result = delete_el(&n, &numerators, &denomenators);
             chooser = 0;
         } else if (chooser == 4) {
-            code_result = 4;
+            code_result = data_computating(n, numerators, denomenators, &n_res, &result);
             chooser = 0;
         } else if (chooser == 5) {
             output(n, numerators, denomenators, n_res, result);
@@ -40,8 +41,11 @@ int main() {
             chooser = 0;
         }
     }
+
     free(numerators);
     free(denomenators);
+    free(result);
+
     return 0;
 }
 
@@ -156,6 +160,7 @@ int delete_el(int* n, int** numerators, int** denomenators) {
             int* buff1 = (int*)malloc((*n - 1) * sizeof(int));
             int* buff2 = (int*)malloc((*n - 1) * sizeof(int));
             int f = 0;
+            int* buff = *numerators;
 
             for (int* p = buff1; p - buff1 < *n - 1; p++) {
                 if (p - buff1 == index && !f) {
@@ -166,9 +171,10 @@ int delete_el(int* n, int** numerators, int** denomenators) {
                 *p = **numerators;
                 *numerators += 1;
             }
-            free(*numerators);
+            free(buff);
             *numerators = buff1;
-            
+            buff = *denomenators;
+
             for (int* p = buff2; p - buff2 < *n - 1; p++) {
                 if (p - buff2 == index && f) {
                     p--;
@@ -178,7 +184,7 @@ int delete_el(int* n, int** numerators, int** denomenators) {
                 *p = **denomenators;
                 *denomenators += 1;
             }
-            free(*denomenators);
+            free(buff);
             *denomenators = buff2;
             *n -= 1;
         }
@@ -201,22 +207,19 @@ void output(int n_or, int* numer, int* denom, int n_res, int* result) {
     if (denom == NULL) {
         printf("NOT INITIALIZED");
     } else {
-        for (int* p = denom; p - denom < n_or; p++) {
-            printf("%d ", *p);
-        }
+        for (int* p = denom; p - denom < n_or; p++) printf("%d ", *p);
     }
 
-    printf("\nComputed sequence: ");
-    if (result== NULL) {
+    printf("\nComputed sequence:\n");
+    if (result == NULL) {
         printf("NOT COMPUTED YET");
     } else {
-        for (int* p = result; p - result < n_res; p++) {
-            printf("%d ", *p);
-        }
+        for (int* p = result; p - result < n_res; p++) printf("%d ", numer[*p]);
+        printf("\n");
+        for (int i = 0; i < n_res; i++) printf("-; ");
+        printf("\n");
+        for (int* p = result; p - result < n_res; p++) printf("%d ", denom[*p]);
     }
     printf("\nTo exit mode enter 'q'\n");
-    while (quit != 'q') {
-        scanf("%c", &quit);
-    }
-
+    while (quit != 'q') scanf("%c", &quit);
 }

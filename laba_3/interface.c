@@ -4,7 +4,7 @@
 void display_result(int code_result) {
     switch (code_result) {
         case -1:
-            printf("\nInitialized "fail"");
+            printf("\nInitialized "fail"\n");
             break;
         case 1:
             printf("\nInitialized "success"\n");
