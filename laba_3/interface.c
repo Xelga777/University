@@ -1,4 +1,4 @@
-#include <stdio.h>                                                                                     
+#include <stdio.h>
 #include "interface.h"
 
 void display_result(int code_result) {

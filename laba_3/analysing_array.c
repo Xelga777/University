@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "analysing_array.h"
 #include "interface.h"
+#include "analysing_array.h"
 
 int main() {
     // Initializing variables
