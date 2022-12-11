@@ -1,9 +1,10 @@
 #include "main.h"
 #include "io.h"
+#include <time.h>
 
 /* This prog handles all strings DURING input
 
-Condition _GNU_VER_ uses funcs from standart lib while
+Condition _GNU_VER_ uses funcs from standard lib while
 Condition _MY_VER_ replaces them with my own implementation */
 
 int main() {
@@ -17,20 +18,28 @@ int main() {
     #ifdef __MY_VER__
     my_readline(&source);
     #endif  // __MY_VER__
+ 
+    double time_spent = 0.0;
 
     while (source && *source != EOF) {
+        time_spent = 0.0;
+        clock_t begin = clock();
+
         #ifdef __GNU_VER__
         if (source) destination = calloc(strlen(source),  50 * sizeof(int));
-        #endif
+        #endif  // __GNU_VER__
 
         #ifdef __MY_VER__
         if (source) destination = calloc(my_strlen(source), 50 * sizeof(int));
-        #endif
+        #endif  // __MY_VER__
  
         str_processing(source, destination);
         output(source, destination);
         if (source) free(source);
         if (destination) free(destination);
+        clock_t end = clock();
+        time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+        printf("The elapsed time is %f seconds", time_spent);
 
         #ifdef __GNU_VER__
         source = readline(NULL);
