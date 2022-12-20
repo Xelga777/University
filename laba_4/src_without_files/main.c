@@ -33,12 +33,14 @@ int main() {
         if (source) destination = calloc(my_strlen(source), 50 * sizeof(int));
         #endif  // __MY_VER__
  
+        clock_t end = clock();
+        time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+
         str_processing(source, destination);
         output(source, destination);
         if (source) free(source);
         if (destination) free(destination);
-        clock_t end = clock();
-        time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+
         printf("The elapsed time is %f seconds", time_spent);
 
         #ifdef __GNU_VER__
