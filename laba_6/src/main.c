@@ -7,8 +7,15 @@ int main() {
 
     while (final == 0) {
         string = getstr(&final, ch);
-        delete_consonants(string);
+
+        printf("BEFORE: ");
         output(string);
+
+        delete_consonants(string);
+
+        printf("AFTER:  ");
+        output(string);
+
         destroy(string);
     }
     return 0;
@@ -60,9 +67,10 @@ void delete_consonants(node *string) {
 }
 
 void output(node *string) {
+    printf("\"");
     while (string -> next) {
         printf("%c", string->ch);
         string = string -> next;
     }
-    printf("\n");
+    printf("\"\n");
 }
