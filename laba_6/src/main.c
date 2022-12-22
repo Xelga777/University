@@ -45,28 +45,29 @@ node *getstr(int *final, char c) {
 }
 
 void delete_consonants(node **string) {
-    node *ptr = *string;
+    node *root = *string;
     char c = 0;
     int counter_sp = 0;
-    int is_root = 1;
+    int whereAmI = 0;
     const char consonants[21] = "BCDFGHJKLMNPQRSTVWXZ";
-    while (ptr) {
-        c = ptr -> ch;
+    while (*string) {
+        whereAmI += 1;
+        c = (*string) -> ch;
         for (int i = 0; i < CONSONANTS_NUM; i++) {
             if (c == consonants[i] || c == consonants[i] + UPPER_TO_LOW) {
-                ptr = remove_ch(ptr, *string);
+                *string = remove_ch(*string, root);
+                whereAmI -= 1;
                 break;
             }
         }
 
-        if (!ptr) {
+        if (!*string) {
             *string = NULL;
             break;
-        } else if (is_root) {
-            *string = ptr;
         }
+
         if (c == '\t') {
-            ptr -> ch = ' ';
+            (*string) -> ch = ' ';
             c = ' ';
         }
         if (c == ' ') {
@@ -74,10 +75,19 @@ void delete_consonants(node **string) {
         } else {
             counter_sp = 0;
         }
-        if (counter_sp > 1) ptr = remove_ch(ptr, *string);
-        ptr = ptr -> next;
-        is_root = 0;
+        if (counter_sp > 1) {
+            *string = remove_ch(*string, root);
+            whereAmI -= 1;
+        }
+
+        if (!whereAmI) {
+            root = *string;
+        } else {
+            *string = (*string) -> next;
+        }
     }
+
+    *string = root;
 }
 
 void output(node *string) {
