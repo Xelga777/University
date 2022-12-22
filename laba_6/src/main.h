@@ -9,7 +9,7 @@
 #define UPPER_TO_LOW 32
 
 node *getstr(int *final, char c);
-void delete_consonants(node *string);
+void delete_consonants(node **string);
 void output(node *string);
 
 
