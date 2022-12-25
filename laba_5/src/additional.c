@@ -16,20 +16,30 @@ void free_structs(voter *voters, int voters_count) {
 }
 
 int analizing_line(char *line) {
-    char ch = 0;
     int count = 0;
-
     for (int i = 0; i < (int)strlen(line); i++) {
-        sscanf(line, "%c", &ch);
-        if (ch == ' ') count += 1;
-        line += 1;
+        if (line[i] == ' ') count += 1;
     }
-    printf("COUNT: %d\n", count);
+
     if (count == 4) {
         return 0;
     } else {
         return -3;
     }
+}
+
+int analizing_polling_n(char str[7]) {
+    int err_code = 0;
+    for (int i = 0; i < 7; i++) {
+        if (i < 3 && !((str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z'))) {
+            err_code = -3;
+        } else if (i == 3 && str[i] != '-') {
+            err_code = -3;
+        } else if (i > 4 && (str[i] < '0' || str[i] > '9')) {
+            err_code = -3;
+        }
+    }
+    return err_code;
 }
 
 void err_handler(int err_code) {

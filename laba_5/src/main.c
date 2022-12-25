@@ -95,9 +95,10 @@ int get_structs(const char *filename, voter **voters, int* voters_count) {
         sscanf(ptr, "%s%s",voter_ptr->polling_n, age_str);
         voter_ptr->age = atoi(age_str);
 
-        // if (voter_ptr->age == 0) {
-        //     err_code = -3;
-        // }
+        err_code = analizing_polling_n(voter_ptr->polling_n);
+        if (voter_ptr->age == 0) {
+            err_code = -3;
+        }
 
         // TEST OUT:
         // printf("NAME: %s\nPOLLING_N: %s\nAGE: %d\n\n", voter_ptr->name, voter_ptr->polling_n, voter_ptr->age);
