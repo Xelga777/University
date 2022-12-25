@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     char *name;
@@ -12,6 +13,7 @@ typedef struct {
 
 void free_structs(voter *voters, int voters_count);
 void swap_voters(voter *v1, voter *v2);
+int analizing_line(char *line);
 void err_handler(int err_code);
 
 #endif  // ADDITIONAL_H_

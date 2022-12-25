@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
     voter *voters = {NULL};
 
     err_code = parse_str(argc, argv, &options);
-    if (!err_code) get_structs(options.filename_in, &voters, &voters_count);
+    if (!err_code) err_code = get_structs(options.filename_in, &voters, &voters_count);
     if (!err_code) call_sort(options, voters, voters_count);
     if (!err_code) output(options.filename_out, voters, voters_count);
 
@@ -55,7 +55,8 @@ int parse_str(int argc, char **argv, Options *options) {
 }
 
 
-void get_structs(const char *filename, voter **voters, int* voters_count) {
+int get_structs(const char *filename, voter **voters, int* voters_count) {
+    int err_code = 0;
     FILE *fp = fopen(filename, "r");
     FILE *fp_cpy = fopen(filename, "r");
 
@@ -65,13 +66,12 @@ void get_structs(const char *filename, voter **voters, int* voters_count) {
     int str_len = 0, len_name = 0;
 
     *voters_count = get_structs_num(fp);
-    printf("COUNT: %d\n", *voters_count);
-    *voters = malloc(*voters_count * sizeof(voter));
+    *voters = calloc(*voters_count, sizeof(voter));
     voter *voter_ptr = *voters;
 
     fp = fopen(filename, "r");
 
-    while (!feof(fp)) {
+    while (!feof(fp) && !err_code) {
         str_len = 0;
 
         do {
@@ -82,12 +82,22 @@ void get_structs(const char *filename, voter **voters, int* voters_count) {
         line = (char*)malloc((str_len + 1) * sizeof(char));
         fscanf(fp, "%[^\n]", line);
         fscanf(fp, "%*c");
-        line[str_len] = '\0';      
+        line[str_len] = '\0';
+        err_code = analizing_line(line);
+
+        if (err_code) {
+            free(line);
+            break;
+        }
 
         len_name = get_name(line, &(voter_ptr->name));
         ptr = line + len_name;
         sscanf(ptr, "%s%s",voter_ptr->polling_n, age_str);
         voter_ptr->age = atoi(age_str);
+
+        // if (voter_ptr->age == 0) {
+        //     err_code = -3;
+        // }
 
         // TEST OUT:
         // printf("NAME: %s\nPOLLING_N: %s\nAGE: %d\n\n", voter_ptr->name, voter_ptr->polling_n, voter_ptr->age);
@@ -98,6 +108,7 @@ void get_structs(const char *filename, voter **voters, int* voters_count) {
 
     fclose(fp);
     fclose(fp_cpy);
+    return err_code;
 }
 
 int get_structs_num(FILE *fp) {

@@ -18,7 +18,7 @@ typedef struct {
 } Options;
 
 // funcs
-void get_structs(const char *filename, voter **voters, int *voters_count);
+int get_structs(const char *filename, voter **voters, int *voters_count);
 int parse_str(int argc, char **argv, Options *options);
 int analysing_files(const char* filename_in, const char* filename_out);
 int get_structs_num(FILE *fp);
