@@ -16,17 +16,11 @@ typedef struct {
     char *filename_out; 
 } Options;
 
-typedef struct {
-    char *name;
-    char polling_n[7];
-    int age;
-} voter;
-
-
 // funcs
 int parse_str(int argc, char **argv, Options *options);
-int get_structs(const char *filename, voter **voters);
 int analysing_files(const char* filename_in, const char* filename_out);
 void err_handler(int err_code);
+
+char *get_name(char *str);
 
 #endif  // MAIN_H_

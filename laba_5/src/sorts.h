@@ -8,7 +8,17 @@
 
 #define REDUCTION_FACTOR 1.247331
 
-// funcs
+typedef struct {
+    char *name;
+    char polling_n[7];
+    int age;
+} voter;
+
+// funcs from main, using struct
+int get_structs(const char *filename, voter **voters);
+int analysing_structs(voter *voters);
+
+
 int name_compare_direct(const void *v1, const void *v2);
 int polling_n_compare_direct(const void *v1, const void *v2);
 int age_compare_direct(const void *v1, const void *v2);

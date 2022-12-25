@@ -5,14 +5,19 @@ int main(int argc, char **argv) {
     Options options = {0, 0, 0, NULL, NULL};
     voter *voter = {NULL};
 
-    if (!err_code) err_code = parse_str(argc, argv, &options);
+    /* if (!err_code) err_code = parse_str(argc, argv, &options);
     if (!err_code) err_code = get_structs(options.filename_in, &voter);
-
-    /* code */
 
     if (err_code) err_handler(err_code);
 
-    if (voter) free(voter);
+    if (voter) free(voter); */
+
+    // TEST get_name:
+    char line[100] = {"NAME SONAME sss XXX-321 19"};
+    char *name = malloc(1000);
+    name = get_name(line);
+    printf("NAME: %s", name);
+
     return err_code;
 }
 
@@ -54,39 +59,56 @@ int parse_str(int argc, char **argv, Options *options) {
     return err_code;
 }
 
+
 int get_structs(const char *filename, voter **voters) {
     int err_code = 0;
 
     FILE *fp = fopen(filename, "r");
-    FILE *fp_cpy = fp;
+    FILE *fp_cpy = fopen(filename, "r");
 
     char *line = NULL;
     char age_str[MAX_INT] = {0};
     char ch = 0;
     int str_len = 0, voters_count = 0;
 
-    while (ch != EOF) {
+
+    while (!feof(fp)) {
         str_len = 0;
 
-        while (ch != '\n' || ch != EOF) {
-            fscanf(fp_cpy, "%*c", &ch);
+        do {
+            fscanf(fp_cpy, "%c", &ch);
             str_len += 1;
-        }
-
+        } while (ch != '\n' && !feof(fp_cpy));
+        
         line = (char*)malloc((str_len + 1) * sizeof(char));
-        fscanf(fp, "%[^\n]*c", line);
+        fscanf(fp, "%[^\n]", line);
+        fscanf(fp, "%*c");
         line[str_len] = '\0';
 
-        printf("LINE: %s\n", line);
+        // TEST OUT:
+        // printf("LINE: %s\n", line);
 
         voters_count += 1;
         *voters = realloc(*voters, voters_count * sizeof(voter));
 
-        sscanf(line, "%s%s%s", (*voters)->name, (*voters)->polling_n, age_str);
+        // TEST
+        // (*voters)->name = malloc(999 * sizeof(char));
+
+        // sscanf(line, "%[-^\n]", (*voters)->name);
+        // sscanf(line, "%s%s",(*voters)->polling_n, age_str);
+
+        // strcat((*voters)->name, name);
         (*voters)->age = atoi(age_str);
+        // voters++;
+
+        // TEST OUT:
+        // printf("NAME: %s\nPOLLING_N: %s\nAGE: %d\n\n", (*voters)->name, (*voters)->polling_n, (*voters)->age);
+        // free((*voters)->name);
         free(line);
     }
 
+    fclose(fp);
+    fclose(fp_cpy);
     return err_code;
 }
 
@@ -98,7 +120,34 @@ int analysing_files(const char* filename_in, const char* filename_out) {
 
     if (!file_in || !file_out) err_code = -4;
 
+    if (file_in) fclose(file_in);
+    if (file_out) fclose(file_out);
+
     return err_code;
+}
+
+// int analysing_structs(voter *voters) {
+
+// }
+char *get_name(char *str) {
+    int len = 0, count_sp = 0;
+    char *name = malloc(sizeof(char));
+
+    
+    while (name[len] && count_sp < 3) {
+        sscanf(str, "%c", &name[len]);
+        len += 1;
+        name = (char*)realloc(name, len);
+        if (name[len] == ' ') count_sp += 1;
+    }
+    // name[len] = '\0';
+    printf("NAME IN FUNC: %s\n", name);
+
+    if (name[len] == -1) {
+        return 0;
+    } else {
+        return name;
+    }
 }
 
 void err_handler(int err_code) {
