@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include "sorts.h"
+#include "additional.h"
 
 #define MAX_INT 10
 
@@ -17,10 +18,12 @@ typedef struct {
 } Options;
 
 // funcs
+void get_structs(const char *filename, voter **voters, int *voters_count);
 int parse_str(int argc, char **argv, Options *options);
 int analysing_files(const char* filename_in, const char* filename_out);
 void err_handler(int err_code);
 
-char *get_name(char *str);
+int get_structs_num(FILE *fp);
+int get_name(char *str, char **name);
 
 #endif  // MAIN_H_

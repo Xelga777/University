@@ -84,10 +84,3 @@ void comb_sort(void *voters, int num, int comparator(const void *, const void *)
 void sortq(void *voters, int num, int comparator(const void *, const void *)) {
     qsort(voters, num, sizeof(voter), comparator);
 }
-
-// additional funcs
-void swap_voters(voter *v1, voter *v2) {
-    voter tmp = *v1;
-    *v1 = *v2;
-    *v2 = tmp;
-}

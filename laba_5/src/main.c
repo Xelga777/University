@@ -2,22 +2,16 @@
 
 int main(int argc, char **argv) {
     int err_code = 0;
+    int voters_count = 0;
     Options options = {0, 0, 0, NULL, NULL};
-    voter *voter = {NULL};
+    voter *voters = {NULL};
 
-    /* if (!err_code) err_code = parse_str(argc, argv, &options);
-    if (!err_code) err_code = get_structs(options.filename_in, &voter);
+    err_code = parse_str(argc, argv, &options);
+    if (!err_code) get_structs(options.filename_in, &voters, &voters_count);
+ 
 
     if (err_code) err_handler(err_code);
-
-    if (voter) free(voter); */
-
-    // TEST get_name:
-    char line[100] = {"NAME SONAME sss XXX-321 19"};
-    char *name = malloc(1000);
-    name = get_name(line);
-    printf("NAME: %s", name);
-
+    if (voters) free_structs(voters, voters_count);
     return err_code;
 }
 
@@ -60,17 +54,20 @@ int parse_str(int argc, char **argv, Options *options) {
 }
 
 
-int get_structs(const char *filename, voter **voters) {
-    int err_code = 0;
-
+void get_structs(const char *filename, voter **voters, int* voters_count) {
     FILE *fp = fopen(filename, "r");
     FILE *fp_cpy = fopen(filename, "r");
 
-    char *line = NULL;
+    char *line = NULL, *ptr = NULL;
     char age_str[MAX_INT] = {0};
     char ch = 0;
-    int str_len = 0, voters_count = 0;
+    int str_len = 0, len_name = 0;
 
+    *voters_count = get_structs_num(fp);
+    *voters = malloc(*voters_count * sizeof(voter));
+    voter *voter_ptr = *voters;
+
+    fp = fopen(filename, "r");
 
     while (!feof(fp)) {
         str_len = 0;
@@ -83,33 +80,34 @@ int get_structs(const char *filename, voter **voters) {
         line = (char*)malloc((str_len + 1) * sizeof(char));
         fscanf(fp, "%[^\n]", line);
         fscanf(fp, "%*c");
-        line[str_len] = '\0';
+        line[str_len] = '\0';      
+
+        len_name = get_name(line, &(voter_ptr->name));
+        ptr = line + len_name;
+        sscanf(ptr, "%s%s",voter_ptr->polling_n, age_str);
+        voter_ptr->age = atoi(age_str);
 
         // TEST OUT:
-        // printf("LINE: %s\n", line);
+        printf("NAME: %s\nPOLLING_N: %s\nAGE: %d\n\n", voter_ptr->name, voter_ptr->polling_n, voter_ptr->age);
 
-        voters_count += 1;
-        *voters = realloc(*voters, voters_count * sizeof(voter));
-
-        // TEST
-        // (*voters)->name = malloc(999 * sizeof(char));
-
-        // sscanf(line, "%[-^\n]", (*voters)->name);
-        // sscanf(line, "%s%s",(*voters)->polling_n, age_str);
-
-        // strcat((*voters)->name, name);
-        (*voters)->age = atoi(age_str);
-        // voters++;
-
-        // TEST OUT:
-        // printf("NAME: %s\nPOLLING_N: %s\nAGE: %d\n\n", (*voters)->name, (*voters)->polling_n, (*voters)->age);
-        // free((*voters)->name);
+        voter_ptr++;
         free(line);
     }
 
     fclose(fp);
     fclose(fp_cpy);
-    return err_code;
+}
+
+int get_structs_num(FILE *fp) {
+    char ch = 0;
+    int lines_num = 0;
+    while (!feof(fp))
+    {
+        fscanf(fp, "%c", &ch);
+        if (ch == '\n') lines_num += 1;
+    }
+    fclose(fp);
+    return lines_num + 1;
 }
 
 int analysing_files(const char* filename_in, const char* filename_out) {
@@ -126,33 +124,25 @@ int analysing_files(const char* filename_in, const char* filename_out) {
     return err_code;
 }
 
-// int analysing_structs(voter *voters) {
-
-// }
-char *get_name(char *str) {
+int get_name(char *str, char **name) {
     int len = 0, count_sp = 0;
-    char *name = malloc(sizeof(char));
+    char ch = 1;
 
-    
-    while (name[len] && count_sp < 3) {
-        sscanf(str, "%c", &name[len]);
+    while (ch && ch != '\n' && count_sp < 3) {
+        sscanf(str, "%c", &ch);
+        str++;
         len += 1;
-        name = (char*)realloc(name, len);
-        if (name[len] == ' ') count_sp += 1;
+        if (ch == ' ') count_sp += 1;
     }
-    // name[len] = '\0';
-    printf("NAME IN FUNC: %s\n", name);
 
-    if (name[len] == -1) {
+    str -= len;
+    *name = (char*)calloc(len, sizeof(char));
+    memcpy(*name, str, len * sizeof(char));
+    (*name)[len - 1] = '\0';
+
+    if (ch == -1) {
         return 0;
     } else {
-        return name;
+        return len - 1;
     }
-}
-
-void err_handler(int err_code) {
-    if (err_code == -1) fprintf(stderr, "Too few arguments");
-    else if (err_code == -2) fprintf(stderr, "Unknown option");
-    else if (err_code == -3) fprintf(stderr, "SMTH");
-    else if (err_code == -4) fprintf(stderr, "No such file");
 }
