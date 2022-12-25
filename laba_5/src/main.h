@@ -21,9 +21,9 @@ typedef struct {
 void get_structs(const char *filename, voter **voters, int *voters_count);
 int parse_str(int argc, char **argv, Options *options);
 int analysing_files(const char* filename_in, const char* filename_out);
-void err_handler(int err_code);
-
 int get_structs_num(FILE *fp);
 int get_name(char *str, char **name);
+void call_sort(Options options, voter *voters, int voters_count);
+void output(char *filename, voter *voters, int voters_count);
 
 #endif  // MAIN_H_

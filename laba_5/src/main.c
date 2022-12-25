@@ -8,7 +8,8 @@ int main(int argc, char **argv) {
 
     err_code = parse_str(argc, argv, &options);
     if (!err_code) get_structs(options.filename_in, &voters, &voters_count);
- 
+    if (!err_code) call_sort(options, voters, voters_count);
+    if (!err_code) output(options.filename_out, voters, voters_count);
 
     if (err_code) err_handler(err_code);
     if (voters) free_structs(voters, voters_count);
@@ -145,4 +146,78 @@ int get_name(char *str, char **name) {
     } else {
         return len - 1;
     }
+}
+
+void call_sort(Options options, voter *voters, int voters_count) {
+    if (options.sort == 'q' || options.sort == 0) {
+        if (options.field == 'n' || options.field == 0) {
+            if (options.direction == 'd' || options.direction == 0) {
+                sortq(voters, voters_count, name_compare_direct);
+            } else {
+                sortq(voters, voters_count, name_compare_reverse);
+            }
+        } else if (options.field == 'p') {
+            if (options.direction == 'd' || options.direction == 0) {
+                sortq(voters, voters_count, polling_n_compare_direct);
+            } else {
+                sortq(voters, voters_count, polling_n_compare_reverse);
+            }
+        } else if (options.field == 'a') {
+            if (options.direction == 'd' || options.direction == 0) {
+                sortq(voters, voters_count, age_compare_direct);
+            } else {
+                sortq(voters, voters_count, age_compare_reverse);
+            }
+        }
+    } else if (options.sort == 'c') {
+        if (options.field == 'n' || options.field == 0) {
+            if (options.direction == 'd' || options.direction == 0) {
+                comb_sort(voters, voters_count, name_compare_direct);
+            } else {
+                comb_sort(voters, voters_count, name_compare_reverse);
+            }
+        } else if (options.field == 'p') {
+            if (options.direction == 'd' || options.direction == 0) {
+                comb_sort(voters, voters_count, polling_n_compare_direct);
+            } else {
+                comb_sort(voters, voters_count, polling_n_compare_reverse);
+            }
+        } else if (options.field == 'a') {
+            if (options.direction == 'd' || options.direction == 0) {
+                comb_sort(voters, voters_count, age_compare_direct);
+            } else {
+                comb_sort(voters, voters_count, age_compare_reverse);
+            }            
+        }
+    } else if (options.sort == 's') {
+        if (options.field == 'n' || options.field == 0) {
+            if (options.direction == 'd' || options.direction == 0) {
+                shell_sort(voters, voters_count, name_compare_direct);
+            } else {
+                shell_sort(voters, voters_count, name_compare_reverse);
+            }
+        } else if (options.field == 'p') {
+            if (options.direction == 'd' || options.direction == 0) {
+                shell_sort(voters, voters_count, polling_n_compare_direct);
+            } else {
+                shell_sort(voters, voters_count, polling_n_compare_reverse);
+            }
+        } else if (options.field == 'a') {
+            if (options.direction == 'd' || options.direction == 0) {
+                shell_sort(voters, voters_count, age_compare_direct);
+            } else {
+                shell_sort(voters, voters_count, age_compare_reverse);
+            }    
+        }
+    }
+}
+
+void output(char *filename, voter *voters, int voters_count) {
+    FILE *fp = fopen(filename, "a");
+
+    for (int i = 0; i < voters_count; i++) {
+        fprintf(fp, "%s %s %d\n", (voters[i]).name, (voters[i]).polling_n, (voters[i]).age);
+    }
+
+    fclose(fp);
 }
