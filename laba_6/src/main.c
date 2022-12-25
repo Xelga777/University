@@ -62,7 +62,6 @@ void delete_consonants(node **string) {
         }
 
         if (!*string) {
-            *string = NULL;
             break;
         }
 
@@ -87,7 +86,7 @@ void delete_consonants(node **string) {
         }
     }
 
-    *string = root;
+    if (whereAmI) *string = root;
 }
 
 void output(node *string) {
