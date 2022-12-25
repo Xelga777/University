@@ -65,6 +65,7 @@ void get_structs(const char *filename, voter **voters, int* voters_count) {
     int str_len = 0, len_name = 0;
 
     *voters_count = get_structs_num(fp);
+    printf("COUNT: %d\n", *voters_count);
     *voters = malloc(*voters_count * sizeof(voter));
     voter *voter_ptr = *voters;
 
@@ -89,7 +90,7 @@ void get_structs(const char *filename, voter **voters, int* voters_count) {
         voter_ptr->age = atoi(age_str);
 
         // TEST OUT:
-        printf("NAME: %s\nPOLLING_N: %s\nAGE: %d\n\n", voter_ptr->name, voter_ptr->polling_n, voter_ptr->age);
+        // printf("NAME: %s\nPOLLING_N: %s\nAGE: %d\n\n", voter_ptr->name, voter_ptr->polling_n, voter_ptr->age);
 
         voter_ptr++;
         free(line);
