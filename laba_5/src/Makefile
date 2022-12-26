@@ -1,8 +1,8 @@
 CC=gcc
-FLAGS=-Wall -Werror -Wextra
+FLAGS=-Wall -Wextra
 OUTPATH=../build/
 
-all: main.o sorts.o additional.o
+all: main.o sorts.o additional.o statistics
 	${CC} ${FLAGS} ${OUTPATH}main.o ${OUTPATH}sorts.o ${OUTPATH}additional.o -o ${OUTPATH}laba5.out
 
 main.o:
@@ -13,6 +13,9 @@ sorts.o:
 
 additional.o:
 	${CC} ${FLAGS} -c additional.c -o ${OUTPATH}additional.o
+
+statistics: sorts.o additional.o
+	$(CC) $(FLAGS) statistics.c $(OUTPATH)sorts.o $(OUTPATH)additional.o -o $(OUTPATH)statistics.out
 
 clean:
 	rm ${OUTPATH}*.o ${OUTPATH}laba5.out
