@@ -1,5 +1,6 @@
 #include "main.h"
 #include "io.h"
+#include "../../../School_21/C2_s21_stringplus-0/src/s21_string.h"
 #include <time.h>
 
 /* This prog handles all strings DURING input
@@ -89,7 +90,7 @@ int str_processing(char *src, char *dst) {
 }
 
 int get_num(char **str, int *len_n) {
-    char buf[256];
+    char *buf = calloc(256, sizeof(char));
     char *ptr = *str;
     int number = 0;
 
@@ -101,7 +102,7 @@ int get_num(char **str, int *len_n) {
 
     #ifdef __MY_VER__
     number = my_atoi(ptr);
-    sprintf(buf, "%#x", number);
+    s21_sprintf(&buf, "%#x", number);
     *len_n = my_strlen(buf);
     #endif  // __MY_VER__
 
@@ -109,5 +110,6 @@ int get_num(char **str, int *len_n) {
         || (*ptr == '-' && *(ptr + 1) >= '0' && *(ptr + 1) <= '9')) ptr += 1;
 
     *str = ptr;
+    free(buf);
     return number;
 }
