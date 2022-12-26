@@ -9,7 +9,7 @@ io.o:
 	$(CC) $(FLAGS) -c io.c -o $(MYPATH)io.o
 
 MY_main: my_string.o io.o
-	$(CC) $(FLAGS) -D __MY_VER__ main.c ../../../School_21/C2_s21_stringplus-0/src/s21_string.c $(MYPATH)io.o $(MYPATH)my_string.o -o $(MYPATH)MY_main.out -lm
+	$(CC) $(FLAGS) -D __MY_VER__ main.c s21_string.c $(MYPATH)io.o $(MYPATH)my_string.o -o $(MYPATH)MY_main.out -lm
 
 GNU_main: io.o
 	$(CC) $(FLAGS) -D __GNU_VER__ main.c $(MYPATH)io.o -lreadline -o $(MYPATH)GNU_main.out
