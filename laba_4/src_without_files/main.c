@@ -75,11 +75,20 @@ int str_processing(char *src, char *dst) {
             dst += len_n;
         }
         if (!*ptr) break;
-        if (*ptr == ' ' || *ptr == '\t') {
-            if (!count_delims) *dst = *ptr;
+
+
+        if (*ptr == '\t') *ptr = ' ';
+        if (*ptr == ' ') {
+            // if (!count_delims) *dst = *ptr;
             count_delims += 1;
         } else {
             count_delims = 0;
+            // *dst = *ptr;
+        }
+
+        if (count_delims > 1) {
+            ptr += 1;
+        } else {
             *dst = *ptr;
         }
         ptr += 1;
