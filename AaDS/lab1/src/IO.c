@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "main.h"
+#include "IO.h"
 
 int get_size(Matrix *matrix) {
     int err_code = 0;
