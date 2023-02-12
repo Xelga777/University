@@ -10,6 +10,7 @@ int main() {
     int n = 0;
     int *arr = NULL;
     input(&n, &arr);
+    // output(n, arr);
     func(&n, &arr);
     output(n, arr);
 
@@ -18,6 +19,7 @@ int main() {
 
 void input(int *n, int **array) {
     scanf("%d", n);
+    // printf("NUM: %d", *n);
     *array = calloc(*n, sizeof(int));
 
     for (int i = 0; i < *n; i++) {
@@ -32,15 +34,19 @@ void func(int *n, int **array) {
         if (!(ptr[i] % 2)) {
             ptr[i] = ptr[i] / 2;
             *n += 1;
-            ptr = realloc(ptr, *n);
+            ptr = realloc(ptr, *n * sizeof(int));
             step(*n, ptr, i);
+            ptr[i + 1] = ptr[i];
+            i += 1;
         }    
     }
+    
+    *array = ptr;
 }
 
 void step(int n, int *array, int index) {
     int cur = 0, prev = array[index];
-    for (int i = index + 1; i < n; i++) {
+    for (int i = index; i < n; i++) {
         cur = array[i];
         array[i] = prev;
         prev = cur;
