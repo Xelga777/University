@@ -1,33 +1,46 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "stack.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 
-#ifdef __LIST_IMPLEMENTATION__
-Node* init(const char *value) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node -> value = *value;
-    node -> next = NULL;
-    return node;
+// #ifdef __LIST_IMPLEMENTATION__
+struct stack *init(struct token data) {
+  struct stack *new = (struct stack *)malloc(sizeof(struct stack));
+
+  new->data = data;
+  new->prev = NULL;
+
+  return new;
 }
 
-Node* push(Node *node, const char *value) {
-    Node* newEl = (Node*)malloc(sizeof(Node));
-    newEl -> next = node;
-    newEl -> value = *value;
-    return newEl;
+struct stack *push(struct stack *top, struct token data) {
+  struct stack *new = init(data);
+  new->prev = top;
+
+  return new;
 }
 
-Node* pop(Node *node) {
-    Node *temp = node -> next;
-    free(node);
-    return temp;
+struct stack *pop(struct stack **top) {
+  struct stack *popped = NULL;
+  if (*top != NULL) {
+    popped = *top;
+    *top = popped->prev;
+  }
+
+  return popped;
 }
 
-void destroy(Node *node) {
-    while (node) node = pop(node);
+void destroy(struct stack *top) {
+  if (top != NULL) destroy(top->prev);
+  free(top);
 }
-#endif  // __LIST_IMPLEMENTATION__
+
+int peek(struct stack *top, struct token *out) {
+  int flag = top == NULL;
+  if (!flag) *out = top->data;
+  return !flag;
+}
+// #endif  // __LIST_IMPLEMENTATION__
 
 #ifdef __VECTOR_IMPLEMENTATION__
 
