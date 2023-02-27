@@ -23,13 +23,15 @@ int main() {
       }
 
       output(inverted);
-
+      
+      free(top);
       destroy(inverted);
       destroy(stack);
-      free(array);
     } else {
       printf("Invalid expression u stupid");
     }
+
+    free(array);
   } else {
     printf("Invalid expression u stupid");
   }

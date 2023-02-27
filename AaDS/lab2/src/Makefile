@@ -11,7 +11,7 @@ libstack_list: stack.h
 	ar -rc $(BUILD_PATH)libstack.a $(BUILD_PATH)stack_list.o
 
 libstack_vector: stack.h
-	$(CC) $(STD) $(FLAGS) -c -D __VECTOR_IMPLEMENTATION__ -o $(BUILD_PATH)stack_vector.o
+	$(CC) $(STD) $(FLAGS) -c stack.c -D __VECTOR_IMPLEMENTATION__ -o $(BUILD_PATH)stack_vector.o
 	ar -rc $(BUILD_PATH)libstack.a $(BUILD_PATH)stack_vector.o
 
 main: 
