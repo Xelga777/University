@@ -15,10 +15,9 @@ libstack_vector: stack.h
 	ar -rc $(BUILD_PATH)libstack.a $(BUILD_PATH)stack_vector.o
 
 main: 
-	$(CC) $(STD) $(FLAGS) $(FILES) $(BUILD_PATH)libstack.a -o $(BUILD_PATH)lab2.out
+	$(CC) $(STD) $(FLAGS) $(FILES) -L$(BUILD_PATH) -lstack -o $(BUILD_PATH)lab2.out
 
 clean:
-	rm -rf BUILD_PATH
-	mkdir ../build
+	rm $(BUILD_PATH)*.o $(BUILD_PATH)*.a $(BUILD_PATH)*.out
 
 rebuild: clean all
