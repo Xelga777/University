@@ -16,7 +16,7 @@ struct stack {
 struct stack {
   struct token data;
   size_t size;
-  size_t root;
+  size_t num;
 };
 // #endif  // __VECTOR_IMPLEMENTATION__
 

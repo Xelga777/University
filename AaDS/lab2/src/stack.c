@@ -22,7 +22,7 @@ struct stack *push(struct stack *top, struct token data) {
 
 struct stack *pop(struct stack **top) {
   struct stack *popped = NULL;
-  if (*top != NULL) {
+  if (*top != NULL) { 
     popped = *top;
     *top = popped->prev;
   }
@@ -48,32 +48,38 @@ struct stack *init(struct token data) {
 
   new->data = data;
   new->size = SIZE;
-  new->root = 1;
+  new->num = 0;
 
   return new;
 }
 
 struct stack *push(struct stack *top, struct token data) {
-  if (top->root >= top->size) {
+  if (top->num >= top->size) {
     top->size += SIZE;
     top = realloc(top, top->size * sizeof(struct stack));
   }
 
-  top[top->root].data = data;
-  top->root++;
+  // top->num++;
 
-  return top;
+  top[top->num + 1].data = data;
+  top[top->num + 1].num = top->num + 1;
+  top[top->num + 1].size = top->size;
+
+  return top++;
 }
 
 struct stack *pop(struct stack **top) {
   struct stack *popped = NULL;
-  if (*top != NULL) {
-    if ((*top)->root == 0) return NULL;
+  struct stack *p_top = *top;
+  if (p_top != NULL) {
+    if (p_top->num == 0) return NULL;
 
-    popped = *top;
+    popped = p_top;
 
-    (*top)->root--;
-    *top = top[(*top)->root - 1];
+    // p_top->num--;
+    // top[p_top->num]->num = p_top->num;
+    // top[p_top->num]->size = p_top->size;
+    *top = top[p_top->num - 1];
   }
 
   return popped;
