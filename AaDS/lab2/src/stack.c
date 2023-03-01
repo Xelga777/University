@@ -44,18 +44,23 @@ int peek(struct stack *top, struct token *out) {
 
 #ifdef __VECTOR_IMPLEMENTATION__
 struct stack *init(struct token data) {
-  struct stack *new = (struct stack *)calloc(1, sizeof(struct stack));
+  struct stack *new = (struct stack *)calloc(SIZE, sizeof(struct stack));
 
   new->data = data;
-  new->size = 1;
+  new->size = SIZE;
+  new->root = 1;
 
   return new;
 }
 
 struct stack *push(struct stack *top, struct token data) {
-  top->size++;
-  top = realloc(top, top->size * sizeof(struct stack));
-  top[top->size].data = data;
+  if (top->root >= top->size) {
+    top->size += SIZE;
+    top = realloc(top, top->size * sizeof(struct stack));
+  }
+
+  top[top->root].data = data;
+  top->root++;
 
   return top;
 }
@@ -63,17 +68,18 @@ struct stack *push(struct stack *top, struct token data) {
 struct stack *pop(struct stack **top) {
   struct stack *popped = NULL;
   if (*top != NULL) {
-    (*top)->size--;
+    if ((*top)->root == 0) return NULL;
+
     popped = *top;
-    *top = top[(*top)->size];
+
+    (*top)->root--;
+    *top = top[(*top)->root - 1];
   }
 
   return popped;
 }
 
-void destroy(struct stack *top) {
-  free(top);
-}
+void destroy(struct stack *top) { free(top); }
 
 int peek(struct stack *top, struct token *out) {
   int flag = top == NULL;

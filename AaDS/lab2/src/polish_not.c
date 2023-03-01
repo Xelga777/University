@@ -1,7 +1,6 @@
 #include "polish_not.h"
 
 #include "io.h"
-#include "token.h"
 
 int main() {
   int str_length = 0, arr_length = 0;
@@ -13,20 +12,22 @@ int main() {
 
   if (array && (array = tokens_control(array, arr_length))) {
     struct stack *stack = polish_stack(array, arr_length);
+    struct stack *p_stack = stack;
+
     if (stack) {
       struct stack *top = pop(&stack);
       struct stack *inverted = init(top->data);
 
       for (struct stack *p = pop(&stack); p != NULL; p = pop(&stack)) {
         inverted = push(inverted, p->data);
-        free(p);
+        // free(p);
       }
 
       output(inverted);
-      
-      free(top);
+
+      // free(top);
       destroy(inverted);
-      destroy(stack);
+      destroy(p_stack);
     } else {
       printf("Invalid expression u stupid");
     }
@@ -39,6 +40,7 @@ int main() {
 
 struct stack *polish_stack(const struct token *array, int length) {
   struct stack *stack = NULL;
+  struct stack *p_stack = stack;
   struct stack *out = NULL;
   int flag = 1;
 
@@ -54,19 +56,21 @@ struct stack *polish_stack(const struct token *array, int length) {
              op2.priority >= current_token.priority) {
         struct stack *buff = pop(&stack);
         out = out != NULL ? push(out, buff->data) : init(buff->data);
-        free(buff);
+        // free(buff);
       }
 
-      stack = stack != NULL ? push(stack, current_token) : init(current_token);
+      stack = stack != NULL ? push(stack, current_token) : init(current_token),
+      p_stack = stack;
     } else if (current_token.type == BRo) {
-      stack = stack != NULL ? push(stack, current_token) : init(current_token);
+      stack = stack != NULL ? push(stack, current_token) : init(current_token),
+      p_stack = stack;
     } else if (current_token.type == BRc) {
       struct token br;
 
       while (peek(stack, &br) && br.type != BRo) {
         struct stack *buff = pop(&stack);
         out = out != NULL ? push(out, buff->data) : init(buff->data);
-        free(buff);
+        // free(buff);
       }
 
       if (!peek(stack, &br)) {
@@ -76,7 +80,7 @@ struct stack *polish_stack(const struct token *array, int length) {
       } else {
         struct stack *buff = pop(&stack);
 
-        free(buff);
+        // free(buff);
         buff = pop(&stack);
       }
     }
@@ -88,13 +92,13 @@ struct stack *polish_stack(const struct token *array, int length) {
     if (val->data.type == BRo) {
       destroy(out);
       out = NULL;
-      free(val);
+      // free(val);
       break;
     } else {
       out = out != NULL ? push(out, val->data) : init(val->data);
-      free(val);
+      // free(val);
     }
   }
-  destroy(stack);
+  destroy(p_stack);
   return out;
 }

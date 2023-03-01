@@ -1,8 +1,8 @@
 #include "stack.h"
 
-#ifndef SRC_POLISH_NOT_H_
-#define SRC_POLISH_NOT_H_
+#ifndef POLISH_NOT_H_
+#define POLISH_NOT_H_
 
 struct stack *polish_stack(const struct token *array, int length);
 
-#endif  // SRC_POLISH_NOT_H_
+#endif  // POLISH_NOT_H_
