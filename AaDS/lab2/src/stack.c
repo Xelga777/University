@@ -22,12 +22,22 @@ struct stack *push(struct stack *top, struct token data) {
 
 struct stack *pop(struct stack **top) {
   struct stack *popped = NULL;
-  if (*top != NULL) { 
+  if (*top != NULL) {
     popped = *top;
     *top = popped->prev;
   }
 
   return popped;
+}
+
+struct stack *invert(struct stack *stack) {
+  struct stack *top = pop(&stack);
+  struct stack *inverted = init(top->data);
+
+  for (struct stack *p = pop(&stack); p != NULL; p = pop(&stack)) {
+    inverted = push(inverted, p->data);
+  }
+  return inverted;
 }
 
 void destroy(struct stack *top) {
@@ -46,9 +56,9 @@ int peek(struct stack *top, struct token *out) {
 struct stack *init(struct token data) {
   struct stack *new = (struct stack *)calloc(SIZE, sizeof(struct stack));
 
-  new->data = data;
   new->size = SIZE;
-  new->num = 0;
+  new->num = 1;
+  new->data = data;
 
   return new;
 }
@@ -59,37 +69,58 @@ struct stack *push(struct stack *top, struct token data) {
     top = realloc(top, top->size * sizeof(struct stack));
   }
 
-  // top->num++;
+  struct stack *p_top = top;
+  top++;
 
-  top[top->num + 1].data = data;
-  top[top->num + 1].num = top->num + 1;
-  top[top->num + 1].size = top->size;
+  top->num = p_top->num + 1;
+  top->data = data;
+  top->size = p_top->size;
 
-  return top++;
+  return top;
 }
 
 struct stack *pop(struct stack **top) {
   struct stack *popped = NULL;
   struct stack *p_top = *top;
+
   if (p_top != NULL) {
-    if (p_top->num == 0) return NULL;
+    if (!p_top->num) return NULL;
+    popped = *top;
 
-    popped = p_top;
-
-    // p_top->num--;
-    // top[p_top->num]->num = p_top->num;
-    // top[p_top->num]->size = p_top->size;
-    *top = top[p_top->num - 1];
+    if (p_top->num != 1) {
+      (*top)--;
+      (*top)->size = p_top->size;
+    } else {
+      (*top)->num -= 1;
+    }
   }
 
   return popped;
 }
 
-void destroy(struct stack *top) { free(top); }
+struct stack *invert(struct stack *stack) {
+  struct stack *top = pop(&stack);
+  struct stack *inverted = init(top->data);
+
+  int i = 2;
+
+  for (struct stack *p = pop(&stack); p != NULL; i++, p = pop(&stack)) {
+    inverted = push(inverted, p->data);
+    inverted->num = i;
+  }
+  return inverted;
+}
+
+void destroy(struct stack *top) {
+  while (pop(&top))
+    ;
+  free(top);
+}
 
 int peek(struct stack *top, struct token *out) {
   int flag = top == NULL;
   if (!flag) *out = top->data;
+
   return !flag;
 }
 

@@ -23,34 +23,33 @@ char *input(int *length) {
 }
 
 void output(struct stack *polish_stack) {
-  struct token el;
-  while (peek(polish_stack, &el)) {
-  //   switch (el.type) {
-  //     case VAR:
-  //       printf("%c", el.var_name);
-  //       break;
-  //     case SUM:
-  //       printf("+");
-  //       break;
-  //     case SUB:
-  //       printf("-");
-  //       break;
-  //     case USUB:
-  //       printf("-");
-  //       break;
-  //     case MUL:
-  //       printf("*");
-  //       break;
-  //     case DIV:
-  //       printf("/");
-  //       break;
-  //     default:
-  //       break;
-  //   }
+  struct stack *p = pop(&polish_stack);
+  struct token el = p->data;
+  while (p) {
+    switch (el.type) {
+      case VAR:
+        printf("%c", el.var_name);
+        break;
+      case SUM:
+        printf("+");
+        break;
+      case SUB:
+        printf("-");
+        break;
+      case USUB:
+        printf("-");
+        break;
+      case MUL:
+        printf("*");
+        break;
+      case DIV:
+        printf("/");
+        break;
+      default:
+        break;
+    }
 
-  // TESTOUT:
-    printf("NUM: %ld\n", polish_stack->num);
-
-    pop(&polish_stack);
+    p = pop(&polish_stack);
+    if (p) el = p->data;
   }
 }

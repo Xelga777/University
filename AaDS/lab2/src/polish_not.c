@@ -15,19 +15,13 @@ int main() {
     struct stack *p_stack = stack;
 
     if (stack) {
-      struct stack *top = pop(&stack);
-      struct stack *inverted = init(top->data);
-
-      for (struct stack *p = pop(&stack); p != NULL; p = pop(&stack)) {
-        inverted = push(inverted, p->data);
-        // free(p);
-      }
+      struct stack *inverted = invert(stack);
+      struct stack *p_inv = inverted;
 
       output(inverted);
 
-      // free(top);
-      destroy(inverted);
-      destroy(p_stack);
+      if (p_inv) destroy(p_inv);
+      if (p_stack) destroy(p_stack);
     } else {
       printf("Invalid expression u stupid");
     }
@@ -56,7 +50,6 @@ struct stack *polish_stack(const struct token *array, int length) {
              op2.priority >= current_token.priority) {
         struct stack *buff = pop(&stack);
         out = out != NULL ? push(out, buff->data) : init(buff->data);
-        // free(buff);
       }
 
       stack = stack != NULL ? push(stack, current_token) : init(current_token),
@@ -70,18 +63,15 @@ struct stack *polish_stack(const struct token *array, int length) {
       while (peek(stack, &br) && br.type != BRo) {
         struct stack *buff = pop(&stack);
         out = out != NULL ? push(out, buff->data) : init(buff->data);
-        // free(buff);
       }
 
       if (!peek(stack, &br)) {
-        destroy(out);
+        if (out) destroy(out);
         out = NULL;
         flag = 0;
       } else {
-        struct stack *buff = pop(&stack);
-
-        // free(buff);
-        buff = pop(&stack);
+        pop(&stack);
+        pop(&stack);
       }
     }
   }
@@ -90,15 +80,13 @@ struct stack *polish_stack(const struct token *array, int length) {
 
   while (flag && (val = pop(&stack)) != NULL) {
     if (val->data.type == BRo) {
-      destroy(out);
+      if (out) destroy(out);
       out = NULL;
-      // free(val);
       break;
     } else {
       out = out != NULL ? push(out, val->data) : init(val->data);
-      // free(val);
     }
   }
-  destroy(p_stack);
+  if (p_stack) destroy(p_stack);
   return out;
 }
