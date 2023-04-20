@@ -8,11 +8,17 @@ int is_tbl(Table *tbl) {
     return _OK;
 }
 
-int is_tbl_full(Table *tbl) {
+int get_els_count(Table *tbl) {
   int count = 0;
   for (size_t i = 0; i < tbl->msize; i++) {
     if (tbl->ks[i].key) count++;
   }
+
+  return count;
+}
+
+int is_tbl_full(Table *tbl) {
+  int count = get_els_count(tbl);
 
   if (count == tbl->msize)
     return _TBL_OVERFLOW;  // means that count of els in tbl equals max tbl size
@@ -49,6 +55,9 @@ int search_free_key(Table *tbl, char *free_key) {
   // Checking errors
   if (err_code = is_tbl(tbl)) return err_code;
 
+  // Считаю количество элементов в таблице
+  int count = get_els_count(tbl);
+
   // Ключ, который будем менять, делая уникальным
   char *new_key = (char *)calloc(10, sizeof(char));
   *new_key = 'A';
@@ -56,7 +65,7 @@ int search_free_key(Table *tbl, char *free_key) {
   // Выйдем из цикла, как только ключ станет уникальным
   while (!flag) {
     flag = 1;
-    for (int i = 0; i < tbl->msize; i++) {
+    for (int i = 0; i < count; i++) {
       // Ключ не уникален, дальше нет смысла проверять
       // Выходим и будем менять ключ
       if (new_key == tbl->ks[i].key) {
