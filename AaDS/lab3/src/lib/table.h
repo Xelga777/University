@@ -54,5 +54,14 @@ int is_tbl_full(Table *tbl);
 int delete_tbl(Table *tbl);
 // Поиск уникального, еще не использованного ключа
 int search_free_key(Table *tbl, char *free_key);
+// Перевод числа в строку
+char *itoa(size_t number);
+// Переворачиваем строку: abc->cba
+void reverse_str(char *str);
+// Считаем сколько цифр в числе
+int num_len(int num);
+// Ищем в таблице строку максимальной длины
+// Все для кросоты вывода
+void get_max_symb_count(Table *tbl, size_t *max_key_len, size_t *max_info_len);
 
 #endif  // TABLE_H_

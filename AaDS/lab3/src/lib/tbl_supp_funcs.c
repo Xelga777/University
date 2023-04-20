@@ -48,7 +48,7 @@ int delete_tbl(Table *tbl) {
 }
 
 int search_free_key(Table *tbl, char *free_key) {
-  int err_code = 0;
+  int err_code = _OK;
   // Нужен для определения есть ли в таблице ключ, который я сгенерила
   int flag = 0;
 
@@ -59,37 +59,77 @@ int search_free_key(Table *tbl, char *free_key) {
   int count = get_els_count(tbl);
 
   // Ключ, который будем менять, делая уникальным
-  char *new_key = (char *)calloc(10, sizeof(char));
-  *new_key = 'A';
+  size_t new_key = 1;
 
   // Выйдем из цикла, как только ключ станет уникальным
   while (!flag) {
     flag = 1;
+
+    // Пробегаемся по всей таблице, сравнивая сгенеренный ключ и все ключи,
+    // которые есть в таблице
     for (int i = 0; i < count; i++) {
       // Ключ не уникален, дальше нет смысла проверять
       // Выходим и будем менять ключ
-      if (new_key == tbl->ks[i].key) {
+      if (!strcmp(itoa(new_key), tbl->ks[i].key)) {
         flag = 0;
         break;
       }
     }
 
-    // Не дошли до последней буквы, значит сдвигаем (A->B)
-    if (!flag && *new_key != 'Z') {
-      *new_key++;
-    } else if (!flag && *new_key == 'Z') {  // Дошли до последней буквы, значит
-                                            // добавляем еще 1 (AZ->AAA)
-
-      // Если закончилась выделенная на ключ память, даем еще
-      if (strlen(new_key) == 10)
-        new_key = realloc(new_key, strlen(new_key) * 2);
-
-      *new_key = 'A';
-      new_key++;
-      *new_key = 'A';
-    }
+    // Key isnt unique -> add 1 to get new value
+    if (!flag) new_key++;
   }
 
-  free_key = new_key;
+  // key is char* so get it from size_t
+  free_key = itoa(new_key);
   return err_code;
+}
+
+char *itoa(size_t number) {
+  int len = num_len(number);  // Считаем длину числа
+  char *str = (char *)calloc(len + 1, sizeof(char));  // +1 для '\0'
+
+  do {
+    str[len] = number % 10 + '0';
+  } while ((number /= 10) > 0);
+
+  // Строка получилась перевернутой
+  reverse_str(str);
+  return str;
+}
+
+void reverse_str(char *str) {
+  char c = 0;
+
+  for (size_t i = 0, j = strlen(str) - 1; i < j; i++, j--) {
+    c = str[i];
+    str[i] = str[j];
+    str[j] = c;
+  }
+}
+
+int num_len(int num) {
+  int len = 0;
+  do {
+    num /= 10;
+    len += 1;
+  } while (num);
+
+  return len;
+}
+
+void get_max_symb_count(Table *tbl, size_t *max_key_len, size_t *max_info_len) {
+  int count = get_els_count(tbl);
+  *max_info_len = -1;
+  *max_key_len = -1;
+
+  size_t key_len = 0;
+  size_t info_len = 0;
+
+  for (size_t i = 0; i < count; i++) {
+    key_len = strlen(tbl->ks[i].key);
+    info_len = strlen(tbl->ks[i].info);
+    if (key_len > *max_key_len) *max_key_len = key_len;
+    if (info_len > *max_info_len) max_info_len = info_len;
+  }
 }

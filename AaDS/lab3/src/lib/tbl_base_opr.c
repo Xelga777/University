@@ -77,8 +77,67 @@ int select_el_by_key(Table *tbl, char *key, Item *result) {
 }
 
 int select_els_by_key_range(Table *tbl, char *key_bg, char *key_end,
-                            Table *result) {}
+                            Table *result) {
+  result = NULL;
 
-int output(Table *tbl) {}
+  // Checking errors
+  int err_code = _OK;
+  if (err_code = (is_tbl(tbl) || !key_bg || !key_end)) return err_code;
+
+  // Считаю количество элементов в таблице
+  int count = get_els_count(tbl);
+
+  // Initialize new tbl with max_els equals count of els in old tbl
+  err_code = init_empt_table(result, count);
+
+  // Нужен для определения есть ли вообще подходящие элементы в таблице
+  int flag = 0;
+
+  // Searching for suiting els
+  for (size_t i = 0; i < count; i++) {
+    if (tbl->ks[i].key >= key_bg && tbl->ks[i].key <= key_end) {
+      result->ks[i].info = tbl->ks[i].info;
+      result->ks[i].key = tbl->ks[i].key;
+      flag = 1;
+    }
+  }
+
+  if (!flag) err_code = _MISSING_EL;  // Опять ничево не нашли...
+  return err_code;
+}
+
+int output(Table *tbl) {
+  // Checking errors
+  int err_code = _OK;
+  if (err_code = is_tbl(tbl)) return err_code;
+
+  // Считаю количество элементов в таблице
+  int count = get_els_count(tbl);
+
+  // Делоем кросивый вывод
+  size_t max_key_len = 0;
+  size_t max_str_len = 0;
+  get_max_symb_count(tbl, &max_key_len, &max_str_len);
+  for (size_t i = 0; i < max_str_len + max_key_len + 3; i++) {
+    printf("#");
+  }
+
+  for (size_t i = 0; i < count; i++) {
+    printf("#");
+    printf("%s", tbl->ks[i].key);
+    // todo заменить пробелы на спецификатор принтфа для выравнивания
+    for (size_t j = 0; j < max_key_len - strlen(tbl->ks[i].key); j++) {
+      printf(" ");
+    }
+    printf("|");
+    printf("%s", tbl->ks[i].info);
+    for (size_t j = 0; j < max_str_len - strlen(tbl->ks[i].info); j++) {
+      printf(" ");
+    }
+    printf("#\n");
+  }
+  
+  return err_code;
+}
 
 int import(Table *tbl, FILE *file) {}

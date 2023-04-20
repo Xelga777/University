@@ -6,7 +6,7 @@ typedef struct item {
   char *info;
 } Item;
 
-// Организация ключей: A, B, ..., Z, AA, AB, ...
+// Организация ключей: 1, 2, ...
 typedef struct key_space {
   // ключ элемента
   char *key;
