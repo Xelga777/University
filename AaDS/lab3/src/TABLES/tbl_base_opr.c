@@ -1,9 +1,51 @@
 #include "../err_handler.h"
 #include "table.h"
 
-int insert_el(Table *tbl, Item new_el) {}
+int insert_el(Table *tbl, Item *new_el) {
+  // Checking errors
+  int err_code = _OK;
+  if (err_code = is_tbl(tbl)) return err_code;
+  if (err_code = is_tbl_full(tbl)) return err_code;
 
-int remove_el(Table *tbl, char *key) {}
+  // Searching a unique key
+  char *new_key = NULL;
+  err_code = search_free_key(tbl, new_key);
+
+  // Inserting new element
+  for (size_t i = 0; i < tbl->msize; i++) {
+    if (!tbl->ks[i].key) {
+      tbl->ks[i].key = new_key;
+      tbl->ks[i].info = new_el;
+    }
+  }
+}
+
+
+int remove_el(Table *tbl, char *key) {
+  // Checking errors
+  int err_code = _OK;
+  if (err_code = is_tbl(tbl)) return err_code;
+
+  // Нужен для определения есть ли вообще заданный ключ в таблице
+  int flag = 0;
+
+  for (size_t i = 0; i < tbl->msize; i++) {
+    if (tbl->ks[i].key == key) {
+      flag = 1;  // El is here!
+
+      // Чищу память и зануляю, чтобы мусор не валялся
+      free(tbl->ks[i].key);
+      if (tbl->ks[i].info) free(tbl->ks[i].info);
+      tbl->ks[i].info = NULL;
+      tbl->ks[i].key = NULL;
+    }
+  }
+
+  // Checking is opr successful
+  if (!flag) err_code = _MISSING_EL;
+  
+  return err_code;
+}
 
 int select_el_by_key(Table *tbl, char *key, Table *result) {}
 

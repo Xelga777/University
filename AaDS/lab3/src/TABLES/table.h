@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "item.h"
 
@@ -13,18 +14,19 @@ typedef struct table {
   size_t msize;
 } Table;
 
+// todo Конструктор на файле и на вводе пользователя
 // CONSTRUCTORS //
 
 // Пустой конструктор, принимает на вход указатель, куда запишется таблица и
 // максимальный размер пространства ключей
 int init_empt_table(Table *new_tbl, size_t max_tbl_size);
-
-// END CONSTRUCTORS //
+// Конструктор на файле
+int init_file_table(Table *new_tbl, FILE *fp);
 
 // BASE OPERATIONS //
 
 // Включение нового элемента в таблицу
-int insert_el(Table *tbl, Item new_el);
+int insert_el(Table *tbl, Item *new_el);
 // Удаление из таблицы элемента по заданному значению ключа
 int remove_el(Table *tbl, char *key);
 // Поиск в таблице элемента по заданному значению ключа, результатом поиска
@@ -38,17 +40,17 @@ int select_els_by_key_range(Table *tbl, char *key_bg, char *key_end,
 // Вывод содержимого таблицы в стандартный поток
 int output(Table *tbl);
 // Импорт данных из текстового файла
-int import(Table *tbl, FILE *file);
-
-// END BASE OPERATIONS //
+int import(Table *tbl, FILE *fp);
 
 // SUPPORTING FUNCS //
 
 // Проверка существования таблицы
 int is_tbl(Table *tbl);
+// Проверяю заполнена ли таблица
+int is_tbl_full(Table *tbl);
 // Полное удаление таблицы
 int delete_tbl(Table *tbl);
-
-// END SUPPORTING FUNCS //
+// Поиск уникального, еще не использованного ключа
+int search_free_key(Table *tbl, char *free_key);
 
 #endif  // TABLE_H_
