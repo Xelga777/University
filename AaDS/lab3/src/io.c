@@ -12,7 +12,7 @@ void menu() {
   while (1) input_menu_command();
 }
 
-int input_menu_command() {
+void input_menu_command() {
   char choosing = getchar();
   if (!strchr(VALID_COMMANDS, choosing)) {
     err_handler(_UNKNOWN_COMMAND);

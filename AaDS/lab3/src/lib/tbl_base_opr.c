@@ -4,12 +4,12 @@
 int insert_el(Table *tbl, Item *new_el) {
   // Checking errors
   int err_code = _OK;
-  if (err_code = is_tbl(tbl)) return err_code;
-  if (err_code = is_tbl_full(tbl)) return err_code;
+  if ((err_code = is_tbl(tbl)) != 0) return err_code;
+  if ((err_code = is_tbl_full(tbl)) != 0) return err_code;
 
   // Searching a unique key
   char *new_key = NULL;
-  err_code = search_free_key(tbl, new_key);
+  err_code = search_free_key(tbl, &new_key);
 
   // Inserting new element
   for (size_t i = 0; i < tbl->msize; i++) {
@@ -25,10 +25,10 @@ int insert_el(Table *tbl, Item *new_el) {
 int remove_el(Table *tbl, char *key) {
   // Checking errors
   int err_code = _OK;
-  if (err_code = is_tbl(tbl)) return err_code;
+  if ((err_code = is_tbl(tbl)) != 0) return err_code;
 
   // Считаю количество элементов в таблице
-  int count = get_els_count(tbl);
+  size_t count = get_els_count(tbl);
 
   // Нужен для определения есть ли вообще заданный ключ в таблице
   int flag = 0;
@@ -56,10 +56,10 @@ int select_el_by_key(Table *tbl, char *key, Item *result) {
 
   // Checking errors
   int err_code = _OK;
-  if (err_code = (is_tbl(tbl) || !key)) return err_code;
+  if ((err_code = (is_tbl(tbl) || !key)) != 0) return err_code;
 
   // Считаю количество элементов в таблице
-  int count = get_els_count(tbl);
+  size_t count = get_els_count(tbl);
 
   // Нужен для определения есть ли вообще заданный ключ в таблице
   int flag = 0;
@@ -67,7 +67,7 @@ int select_el_by_key(Table *tbl, char *key, Item *result) {
   for (size_t i = 0; i < count; i++) {
     if (tbl->ks[i].key == key) {
       flag = 1;  // El is here!
-      result = tbl->ks[i].info;
+      *result = *(tbl->ks[i].info);
       break;
     }
   }
@@ -82,10 +82,10 @@ int select_els_by_key_range(Table *tbl, char *key_bg, char *key_end,
 
   // Checking errors
   int err_code = _OK;
-  if (err_code = (is_tbl(tbl) || !key_bg || !key_end)) return err_code;
+  if ((err_code = (is_tbl(tbl) || !key_bg || !key_end)) != 0) return err_code;
 
   // Считаю количество элементов в таблице
-  int count = get_els_count(tbl);
+  size_t count = get_els_count(tbl);
 
   // Initialize new tbl with max_els equals count of els in old tbl
   err_code = init_empt_table(result, count);
@@ -109,10 +109,10 @@ int select_els_by_key_range(Table *tbl, char *key_bg, char *key_end,
 int output(Table *tbl) {
   // Checking errors
   int err_code = _OK;
-  if (err_code = is_tbl(tbl)) return err_code;
+  if ((err_code = is_tbl(tbl)) != 0) return err_code;
 
   // Считаю количество элементов в таблице
-  int count = get_els_count(tbl);
+  size_t count = get_els_count(tbl);
 
   // Делоем кросивый вывод
   size_t max_key_len = 0;
@@ -124,20 +124,13 @@ int output(Table *tbl) {
 
   for (size_t i = 0; i < count; i++) {
     printf("#");
-    printf("%s", tbl->ks[i].key);
-    // todo заменить пробелы на спецификатор принтфа для выравнивания
-    for (size_t j = 0; j < max_key_len - strlen(tbl->ks[i].key); j++) {
-      printf(" ");
-    }
+    printf("%*s", (int)(-max_key_len + strlen(tbl->ks[i].key)), tbl->ks[i].key);
     printf("|");
-    printf("%s", tbl->ks[i].info);
-    for (size_t j = 0; j < max_str_len - strlen(tbl->ks[i].info); j++) {
-      printf(" ");
-    }
+    printf("%*s", (int)(-max_str_len + strlen(tbl->ks[i].info->info)), tbl->ks[i].info->info);
     printf("#\n");
   }
   
   return err_code;
 }
 
-int import(Table *tbl, FILE *file) {}
+// int import(Table *tbl, FILE *file) {}

@@ -8,7 +8,7 @@
 #include "err_handler.h"
 
 void command_handler(char command);
-int input_menu_command();
+void input_menu_command();
 void menu();
 
 #endif  // IO_H_

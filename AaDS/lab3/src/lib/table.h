@@ -47,13 +47,13 @@ int import(Table *tbl, FILE *fp);
 // Проверка существования таблицы
 int is_tbl(Table *tbl);
 // Считаю количество элементов в таблице
-int get_els_count(Table *tbl);
+size_t get_els_count(Table *tbl);
 // Проверяю заполнена ли таблица
 int is_tbl_full(Table *tbl);
 // Полное удаление таблицы
 int delete_tbl(Table *tbl);
 // Поиск уникального, еще не использованного ключа
-int search_free_key(Table *tbl, char *free_key);
+int search_free_key(Table *tbl, char **free_key);
 // Перевод числа в строку
 char *itoa(size_t number);
 // Переворачиваем строку: abc->cba

@@ -3,9 +3,10 @@ STD = -std=c11
 WFLAGS = -Wall -Werror -Wextra
 TEST_FLAGS = -lcheck
 
-S21_LIB = table.a
+S21_LIB = libtable.a
 LIB_FILES = $(wildcard lib/*.c)
-OBJ_FILES = $(patsubst %.c, %.o, $(LIB_FILES))
+C_FILES = $(wildcard *.c)
+OBJ_FILES = $(patsubst %.c, %.o, $(C_FILES))
 
 ## здесь прописывать файлы с тестами
 TEST_C_FILES = $(wildcard tests.c)
@@ -17,16 +18,22 @@ TEST_OBJ_FILES = $(patsubst %.c, %.o, $(TEST_C_FILES))
 WSL_LINK_FLAGS = -lsubunit -lm
 
 ## очистка мусора
-TRASH = $(wildcard *.o *.a *.gc* *.out tests test.info report)
+TRASH = $(wildcard *.o *.a *.gc* tests test.info report)
 
 all: clean table.a main
 
 table.a: table.o
-	ar rc $(S21_LIB) $(OBJ_FILES)
+	ar -rc $(S21_LIB) $(wildcard tbl_*.o)
 	ranlib $(S21_LIB)
 
 table.o:
 	$(CC) $(STD) -c $(WFLAGS) $(LIB_FILES)
+
+main.o:
+	$(CC) $(STD) -c $(WFLAGS) $(C_FILES)
+
+main: main.o table.a
+	$(CC) $(STD) $(WFLAGS) $(OBJ_FILES) -L. -ltable -o lab3.out
 
 test: clean table.a
 ifeq ($(shell uname -s), Linux)
@@ -51,13 +58,13 @@ endif
 	open report/index.html
 
 check_style:
-	clang-format -n -style=google *.c *.h
+	clang-format -n -style=google *.c *.h lib/*.*
 
 correct_style:
 	clang-format -i -style=google *.c *.h
 
 check_leaks: clean test
-	valgrind --leak-check=full --show-leak-kinds=all -s ./a.out
+	valgrind --leak-check=full --show-leak-kinds=all -s ./lab3.out
 
 clean:
 	rm -rf $(TRASH)

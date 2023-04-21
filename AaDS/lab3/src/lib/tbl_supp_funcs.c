@@ -8,8 +8,8 @@ int is_tbl(Table *tbl) {
     return _OK;
 }
 
-int get_els_count(Table *tbl) {
-  int count = 0;
+size_t get_els_count(Table *tbl) {
+  size_t count = 0;
   for (size_t i = 0; i < tbl->msize; i++) {
     if (tbl->ks[i].key) count++;
   }
@@ -18,12 +18,13 @@ int get_els_count(Table *tbl) {
 }
 
 int is_tbl_full(Table *tbl) {
-  int count = get_els_count(tbl);
+  int err_code = _OK;
+  size_t count = get_els_count(tbl);
 
   if (count == tbl->msize)
-    return _TBL_OVERFLOW;  // means that count of els in tbl equals max tbl size
-  else
-    return _OK;
+    err_code = _TBL_OVERFLOW;  // means that count of els in tbl equals max tbl size
+  
+  return err_code;
 }
 
 int delete_tbl(Table *tbl) {
@@ -33,7 +34,7 @@ int delete_tbl(Table *tbl) {
                           // может быть определена, а пространство ключей нет
 
   if (tbl->ks) {
-    for (int i = 0; i < tbl->msize; i++) {
+    for (size_t i = 0; i < tbl->msize; i++) {
       if (tbl->ks[i].info->info) free(tbl->ks[i].info->info);
       if (tbl->ks[i].info) free(tbl->ks[i].info);
       if (tbl->ks[i].key) free(tbl->ks[i].key);
@@ -47,16 +48,16 @@ int delete_tbl(Table *tbl) {
   return err_code;
 }
 
-int search_free_key(Table *tbl, char *free_key) {
+int search_free_key(Table *tbl, char **free_key) {
   int err_code = _OK;
   // Нужен для определения есть ли в таблице ключ, который я сгенерила
   int flag = 0;
 
   // Checking errors
-  if (err_code = is_tbl(tbl)) return err_code;
+  if ((err_code = is_tbl(tbl)) != 0) return err_code;
 
   // Считаю количество элементов в таблице
-  int count = get_els_count(tbl);
+  size_t count = get_els_count(tbl);
 
   // Ключ, который будем менять, делая уникальным
   size_t new_key = 1;
@@ -67,7 +68,7 @@ int search_free_key(Table *tbl, char *free_key) {
 
     // Пробегаемся по всей таблице, сравнивая сгенеренный ключ и все ключи,
     // которые есть в таблице
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
       // Ключ не уникален, дальше нет смысла проверять
       // Выходим и будем менять ключ
       if (!strcmp(itoa(new_key), tbl->ks[i].key)) {
@@ -81,7 +82,7 @@ int search_free_key(Table *tbl, char *free_key) {
   }
 
   // key is char* so get it from size_t
-  free_key = itoa(new_key);
+  *free_key = itoa(new_key);
   return err_code;
 }
 
@@ -119,7 +120,7 @@ int num_len(int num) {
 }
 
 void get_max_symb_count(Table *tbl, size_t *max_key_len, size_t *max_info_len) {
-  int count = get_els_count(tbl);
+  size_t count = get_els_count(tbl);
   *max_info_len = -1;
   *max_key_len = -1;
 
@@ -128,8 +129,8 @@ void get_max_symb_count(Table *tbl, size_t *max_key_len, size_t *max_info_len) {
 
   for (size_t i = 0; i < count; i++) {
     key_len = strlen(tbl->ks[i].key);
-    info_len = strlen(tbl->ks[i].info);
+    info_len = strlen(tbl->ks[i].info->info);
     if (key_len > *max_key_len) *max_key_len = key_len;
-    if (info_len > *max_info_len) max_info_len = info_len;
+    if (info_len > *max_info_len) *max_info_len = info_len;
   }
 }
