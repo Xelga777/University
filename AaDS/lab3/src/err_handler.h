@@ -9,6 +9,7 @@
 #define _MISSING_EL 4
 
 #define VALID_COMMANDS "q1234567\n"
+#define VALID_CONSTR "123\n"
 
 #include <stdio.h>
 

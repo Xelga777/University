@@ -7,8 +7,13 @@
 
 #include "err_handler.h"
 
-void command_handler(char command);
+// Обработка выбора пользователя, сделанного в меню
+void command_handler(char command, Table **tbls);
+// Обработка ввода пользователя с клавиатуры
 void input_menu_command();
+// Выбор конструктора для новой таблицы
+void choose_tbl_constr(Table **tbls);
+// Интерфейс программы
 void menu();
 
 #endif  // IO_H_
